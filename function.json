@@ -1,0 +1,175 @@
+{
+  "type": "scalar.function",
+  "input_schema": {
+    "type": "object",
+    "description": "A cat photograph to evaluate for background cleanliness and calm.",
+    "properties": {
+      "cat_photo": {
+        "type": "image",
+        "description": "A photograph containing a cat. The function evaluates the background of this image for visual quietness, subject separation, and distraction resistance, scoring how well the background supports the cat as the clear subject of the photograph."
+      }
+    },
+    "required": [
+      "cat_photo"
+    ]
+  },
+  "tasks": [
+    {
+      "type": "vector.completion",
+      "messages": [
+        {
+          "role": "system",
+          "content": [
+            {
+              "type": "text",
+              "text": "You are a visual analysis assistant specializing in photograph composition. You evaluate the visual energy and restfulness of backgrounds in photographs. You focus exclusively on the background space — everything except the main subject — and judge whether it feels settled and calm or loud and chaotic."
+            }
+          ]
+        },
+        {
+          "role": "user",
+          "content": [
+            {
+              "$jmespath": "input.cat_photo"
+            },
+            {
+              "type": "text",
+              "text": "Look at the background of this cat photograph — everything except the cat itself. How visually quiet is the surrounding space? Consider the tones, patterns, colors, shapes, and overall energy of the background."
+            }
+          ]
+        }
+      ],
+      "responses": [
+        [
+          {
+            "type": "text",
+            "text": "The background is calm and visually quiet. The tones feel muted and harmonious, patterns are gentle or absent, and the space has a settled, restful quality. There is a clear sense of stillness — nothing in the surrounding area buzzes with visual energy or demands attention."
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "text": "The background has moderate visual energy. Some areas feel calm while others introduce busyness through patterns, colors, or objects, but it does not feel overwhelmingly noisy. The space is neither perfectly still nor chaotic — it carries some activity without being visually loud."
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "text": "The background is visually loud and chaotic. It is crowded with bright objects, busy patterns, competing colors, or dense clusters of visual information that create a noisy, restless feel. The surrounding space vibrates with energy and has no sense of calm."
+          }
+        ]
+      ],
+      "output": {
+        "$starlark": "output['scores'][0] * 1.0 + output['scores'][1] * 0.5 + output['scores'][2] * 0.0"
+      }
+    },
+    {
+      "type": "vector.completion",
+      "messages": [
+        {
+          "role": "user",
+          "content": [
+            {
+              "$jmespath": "input.cat_photo"
+            },
+            {
+              "type": "text",
+              "text": "In this photograph, does the cat stand out as the clear, distinct subject, or does it blend into its surroundings? Consider the contrast in tone, texture, color, and spatial depth between the cat and everything behind it. Does the cat emerge as the obvious focal point, or does it become just another element in the scene?"
+            }
+          ]
+        }
+      ],
+      "responses": [
+        [
+          {
+            "type": "text",
+            "text": "The cat emerges as the unmistakable subject of this photograph. There is strong visual contrast between the cat and its background — whether through tone, texture, color, or spatial depth — that creates a clear boundary. The cat commands the frame as the obvious focal point and the eye has no trouble identifying it as the primary element."
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "text": "The cat is somewhat distinguishable from its background, but the separation is not strong. There is some contrast between the cat and its surroundings, though the cat does not stand out as sharply as it could. It reads as the likely subject, but it partly merges with or gets muted by elements around it."
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "text": "The cat blends into its surroundings with little to distinguish it from the background. Similar tones, textures, or visual weight between the cat and its environment make the cat feel like just another element in the scene rather than the clear subject. The viewer's eye has no strong reason to prioritize the cat over anything else in the frame."
+          }
+        ]
+      ],
+      "output": {
+        "$starlark": "output['scores'][0] * 1.0 + output['scores'][1] * 0.5 + output['scores'][2] * 0.0"
+      }
+    },
+    {
+      "type": "vector.completion",
+      "messages": [
+        {
+          "role": "system",
+          "content": [
+            {
+              "type": "text",
+              "text": "You evaluate cat photographs for specific visual distractors. Your focus is on identifying individual elements in the background that actively compete with the cat for the viewer's attention — things like bright objects, glowing screens, bold artwork, harsh light sources, vivid splashes of color, or other eye-catching features that pull the gaze away from the cat."
+            }
+          ]
+        },
+        {
+          "role": "user",
+          "content": [
+            {
+              "$jmespath": "input.cat_photo"
+            },
+            {
+              "type": "text",
+              "text": "Examine this cat photograph. Can the viewer's eye land on the cat and remain there comfortably, or are there specific elements in the background that pull attention away from the cat?"
+            }
+          ]
+        },
+        {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "text",
+              "text": "Let me look at the background carefully for any specific elements that compete with the cat for attention."
+            }
+          ]
+        },
+        {
+          "role": "user",
+          "content": [
+            {
+              "type": "text",
+              "text": "What is your assessment?"
+            }
+          ]
+        }
+      ],
+      "responses": [
+        [
+          {
+            "type": "text",
+            "text": "The viewer's eye lands on the cat and stays there. Nothing in the background rises to the level of demanding attention. Objects remain in supporting roles, colors stay subordinate, and light falls in a way that reinforces the cat as the subject. There are no competing focal points pulling the gaze away."
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "text": "There are some mildly distracting elements in the background that occasionally draw the eye away from the cat, but they are not overpowering. The cat still reads as the primary subject, though the viewing experience is not entirely settled — attention drifts slightly before returning to the cat."
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "text": "There are strong distractors in the background that actively compete with the cat for attention. Bright objects, bold colors, harsh light, or other prominent visual features pull the viewer's eye away from the cat repeatedly. The viewing experience feels fractured, with attention bouncing between the cat and its visual competitors."
+          }
+        ]
+      ],
+      "output": {
+        "$starlark": "output['scores'][0] * 1.0 + output['scores'][1] * 0.5 + output['scores'][2] * 0.0"
+      }
+    }
+  ],
+  "description": "Evaluates the background of a cat photograph for cleanliness and calm. Scores three qualities — visual quietness of the surrounding space, subject separation between the cat and its background, and distraction resistance against specific competing elements — to determine how well the background supports the cat as the clear subject."
+}
